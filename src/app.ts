@@ -44,3 +44,5 @@ app.listen(port, () => {
     //console.log(process.env.GREETING)
 });
 //app.use(bodyParser.urlencoded({ extended: true}));
+
+export default app;
