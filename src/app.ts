@@ -13,7 +13,15 @@ const app = express();
 const port = process.env.PORT || 5000;
 //const port = 3000;
 
-app.use(cors());
+// CORS configuration
+const corsOptions = {
+    origin: '*', // Allow any origin (equivalent to .SetIsOriginAllowed(origin => true))
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow any method
+    allowedHeaders: ['Content-Type', 'Authorization'], // You can specify which headers to allow
+    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json());
 
