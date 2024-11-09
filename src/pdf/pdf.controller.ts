@@ -67,7 +67,7 @@ export const readPdfBySearchTerm: RequestHandler = async (req: Request, res: Res
         res.status(500).json({message: 'There was an error when fetching pdfs by search term'});
     }
 };
-
+/*
 export const createPdf: RequestHandler = async (req: Request, res: Response) => {
     try {
         const okPacket: OkPacket = await PdfDao.createPdf(req.body);
@@ -81,21 +81,25 @@ export const createPdf: RequestHandler = async (req: Request, res: Response) => 
         res.status(500).json({message: 'There was an error when creating a new pdf'});
     }
 };
+*/
 
-/*
-export const createPdf: RequestHandler = async (req: Request, res: Response, next) => {
-    upload.single('pdfBlob')(req, res, async (err) => {
+// Add multer as middleware to handle file upload
+export const createPdf: RequestHandler = async (req: Request, res: Response) => {
+    upload.single('pdfBlob')(req, res, async (err: any) => {
         if (err) {
-            return res.status(500).json({ message: 'File upload failed' });
+            console.error('[pdf.controller][createPdf][Multer Error] ', err);
+            return res.status(500).json({ message: 'File upload error' });
         }
-        
+
         try {
-            const { id, pdfUserId, pdfName, dateUploaded } = req.body;
+            const { pdfUserId, pdfName, dateUploaded } = req.body;
             const pdfBlob = req.file?.buffer;  // This holds the binary data of the file
 
-            // Include `id` if required by the Pdf interface; otherwise, leave it out
-            const pdfData = { id, pdfUserId, pdfBlob, pdfName, dateUploaded };
+            if (!pdfBlob) {
+                return res.status(400).json({ message: 'No file uploaded' });
+            }
 
+            const pdfData: Pdf = { pdfUserId: parseInt(pdfUserId), pdfBlob, pdfName, dateUploaded };
             const okPacket: OkPacket = await PdfDao.createPdf(pdfData);
 
             res.status(200).json(okPacket);
@@ -105,7 +109,7 @@ export const createPdf: RequestHandler = async (req: Request, res: Response, nex
         }
     });
 };
-*/
+
 export const updatePdf: RequestHandler = async (req: Request, res: Response) => {
     try {
         const okPacket: OkPacket = await PdfDao.updatePdf(req.body);
