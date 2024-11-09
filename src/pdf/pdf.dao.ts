@@ -20,7 +20,7 @@ export const readPdfBySearchTerm = async (search: string) => {
 };
 
 export const createPdf = async (pdf: Pdf) => {
-    return execute<OkPacket>(pdfQueries.createPdf, [pdf.pdfUserId, pdf.pdfBlob, pdf.pdfName, pdf.dateUploaded]);
+    return execute<OkPacket>(pdfQueries.createPdf, [pdf.pdfUserId, pdf.pdfName, pdf.dateUploaded, pdf.pdfBlob]);
 };
 
 export const updatePdf = async (pdf: Pdf) => {

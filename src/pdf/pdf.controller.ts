@@ -99,7 +99,7 @@ export const createPdf: RequestHandler = async (req: Request, res: Response) => 
                 return res.status(400).json({ message: 'No file uploaded' });
             }
 
-            const pdfData: Pdf = { pdfUserId: parseInt(pdfUserId), pdfBlob, pdfName, dateUploaded };
+            const pdfData: Pdf = { pdfUserId: parseInt(pdfUserId), pdfName, dateUploaded, pdfBlob };
             const okPacket: OkPacket = await PdfDao.createPdf(pdfData);
 
             res.status(200).json(okPacket);
