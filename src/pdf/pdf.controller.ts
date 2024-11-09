@@ -2,6 +2,11 @@ import { Request, Response, RequestHandler } from "express";
 import { Pdf } from "./pdf.model";
 import * as PdfDao from './pdf.dao';
 import { OkPacket } from "mysql";
+import multer from 'multer';
+
+// Configure multer for handling file uploads
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 export const readPdf: RequestHandler = async (req: Request, res: Response) => {
     try {
@@ -18,6 +23,25 @@ export const readPdf: RequestHandler = async (req: Request, res: Response) => {
     } catch (error) {
         console.error('[pdf.controller][readPdf][Error] ', error);
         res.status(500).json({message: 'There was an error when fetching pdfs'});
+    }
+};
+
+export const readPdfById: RequestHandler = async (req: Request, res: Response) => {
+    try {
+        const id = parseInt(req.params.id as string);
+        const pdf = await PdfDao.readPdfById(id);
+
+        if (pdf && pdf.length > 0) {
+            const pdfData = pdf[0];
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', `inline; filename="${pdfData.pdfName}"`);
+            res.send(pdfData.pdfBlob);
+        } else {
+            res.status(404).json({ message: 'PDF not found' });
+        }
+    } catch (error) {
+        console.error('[pdf.controller][readPdfById][Error] ', error);
+        res.status(500).json({ message: 'There was an error when fetching the pdf by id' });
     }
 };
 
@@ -58,6 +82,30 @@ export const createPdf: RequestHandler = async (req: Request, res: Response) => 
     }
 };
 
+/*
+export const createPdf: RequestHandler = async (req: Request, res: Response, next) => {
+    upload.single('pdfBlob')(req, res, async (err) => {
+        if (err) {
+            return res.status(500).json({ message: 'File upload failed' });
+        }
+        
+        try {
+            const { id, pdfUserId, pdfName, dateUploaded } = req.body;
+            const pdfBlob = req.file?.buffer;  // This holds the binary data of the file
+
+            // Include `id` if required by the Pdf interface; otherwise, leave it out
+            const pdfData = { id, pdfUserId, pdfBlob, pdfName, dateUploaded };
+
+            const okPacket: OkPacket = await PdfDao.createPdf(pdfData);
+
+            res.status(200).json(okPacket);
+        } catch (error) {
+            console.error('[pdf.controller][createPdf][Error] ', error);
+            res.status(500).json({ message: 'There was an error when creating a new pdf' });
+        }
+    });
+};
+*/
 export const updatePdf: RequestHandler = async (req: Request, res: Response) => {
     try {
         const okPacket: OkPacket = await PdfDao.updatePdf(req.body);
