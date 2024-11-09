@@ -93,18 +93,21 @@ export const createPdf: RequestHandler = async (req: Request, res: Response) => 
 
         try {
             const { pdfUserId, pdfName, dateUploaded } = req.body;
-            const pdfBlob = req.file?.buffer;  // This holds the binary data of the file
-
+            const pdfBlob = req.file?.buffer;
+        
             if (!pdfBlob) {
                 return res.status(400).json({ message: 'No file uploaded' });
             }
-
+        
             const pdfData: Pdf = { pdfUserId: parseInt(pdfUserId), pdfName, dateUploaded, pdfBlob };
+        
+            console.log('pdfData:', pdfData);  // Log pdfData to inspect values
+        
             const okPacket: OkPacket = await PdfDao.createPdf(pdfData);
-
+        
             res.status(200).json(okPacket);
         } catch (error) {
-            console.error('[pdf.controller][createPdf][Error] ', error);
+            console.error('[pdf.controller][createPdf][Error]', error);
             res.status(500).json({ message: 'There was an error when creating a new pdf' });
         }
     });
