@@ -20,11 +20,11 @@ export const readPdfBySearchTerm = async (search: string) => {
 };
 
 export const createPdf = async (pdf: Pdf) => {
-    return execute<OkPacket>(pdfQueries.createPdf, [pdf.pdfUrl, pdf.pdfName, pdf.dateUploaded]);
+    return execute<OkPacket>(pdfQueries.createPdf, [pdf.pdfUserId, pdf.pdfBlob, pdf.pdfName, pdf.dateUploaded]);
 };
 
 export const updatePdf = async (pdf: Pdf) => {
-    return execute<OkPacket>(pdfQueries.updatePdf, [pdf.pdfUrl, pdf.pdfName, pdf.dateUploaded, pdf.id]);
+    return execute<OkPacket>(pdfQueries.updatePdf, [pdf.pdfBlob, pdf.pdfName, pdf.dateUploaded, pdf.id]);
 };
 
 export const deletePdf = async (id: number) => {

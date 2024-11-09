@@ -10,6 +10,10 @@ router.
     route('/pdf/:pdfName').
     get(PdfController.readPdfByName);
 
+router.
+    route('/pdf/:id').
+    get(PdfController.readPdfById);
+
 router
     .route('/pdf/search/:search')
     .get(PdfController.readPdfBySearchTerm);
