@@ -54,33 +54,38 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 // Endpoint to handle PDF upload
-// Endpoint to handle PDF upload
-app.post('/upload', upload.single('pdfFile'), async (req: Request, res: Response): Promise<void> => {
+app.post('/upload', upload.single('pdfBlob'), async (req: Request, res: Response): Promise<void> => {
     try {
       if (!req.file) {
         res.status(400).send('No file uploaded');
-        return;  // Early return to prevent further code execution
+        return;
       }
   
-      // Extract PDF file data
       const fileBuffer = req.file.buffer;
       const fileName = req.file.originalname;
       const dateUploaded = new Date().toISOString().slice(0, 10); // YYYY-MM-DD format
   
+      // Ensure you're extracting pdfUserId properly
+      const pdfUserId = req.body.pdfUserId;
+  
+      // Check for missing pdfUserId
+      if (!pdfUserId) {
+        res.status(400).send('Missing pdfUserId');
+        return;
+      }
+  
       // MySQL Insert query
       const query = `
-        INSERT INTO pdf_files (pdfUserId, pdfName, dateUploaded, pdfBlob)
+        INSERT INTO pdfs(pdfUserId, pdfName, dateUploaded, pdfBlob)
         VALUES (?, ?, ?, ?)
       `;
-  
-      const pdfUserId = req.body.pdfUserId;  // Extract user ID from request body
   
       // Execute the query
       await execute<any[]>(query, [pdfUserId, fileName, dateUploaded, fileBuffer]);
   
       res.status(200).send('PDF file uploaded successfully');
     } catch (error) {
-      console.error('Error uploading file:', error);
+      console.error('Error uploading file:', error);  // This will show the full error in your logs
       res.status(500).send('Error uploading file');
     }
   });

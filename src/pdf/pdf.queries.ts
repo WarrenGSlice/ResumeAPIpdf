@@ -24,7 +24,7 @@ export const pdfQueries = {
         WHERE bhxhr5tkthkjr1rbfskg.pdfs.pdfName LIKE ?
     `,
     createPdf:`
-        INSERT INTO pdf(pdfUserId, pdfName, dateUploaded, pdfBlob)
+        INSERT INTO pdfs(pdfUserId, pdfName, dateUploaded, pdfBlob)
         VALUES(?,?,?,?)
     `,
     updatePdf:`
