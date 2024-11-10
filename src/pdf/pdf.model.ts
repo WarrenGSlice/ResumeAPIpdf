@@ -3,5 +3,5 @@ export interface Pdf {
     pdfUserId: number;
     pdfName: string;
     dateUploaded: string;
-    pdfBlob: Buffer;  // Change to Buffer type to handle binary data
+    pdfBlob: string;  // Change to Buffer type to handle binary data
 }

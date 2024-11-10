@@ -78,8 +78,9 @@ export const createPdf: RequestHandler = async (req: Request, res: Response) => 
         res.status(200).json(okPacket);
     } catch (error) {
         console.error('[pdf.controller][createPdf][Error] ', error);
-        res.status(200).json(req.body);
+        //res.status(500).json(req.body);
         res.status(500).json({message: 'There was an error when creating a new pdf'});
+        res.status(501).json(req.body);
     }
 };
 /*
