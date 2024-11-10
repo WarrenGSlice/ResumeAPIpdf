@@ -80,15 +80,42 @@ export const createPdf: RequestHandler = async (req: Request, res: Response) => 
         console.error('[pdf.controller][createPdf][Error] ', error);
         res.status(500).json({message: 'There was an error when creating a new pdf'});
     }
-};
-*/
+};*/
+
+export const createPdf: RequestHandler = async (req,res) => {
+    const form = req.body as Pdf;
+
+    try {
+        const addedPdf = await PdfDao.createPdf(form);
+        const {} = addedPdf;
+        res.status(201).send({error: null, result: form});
+    } catch (error) {
+        console.error('[pdf.controller][createPdf][Error] ', error);
+        res.status(500).json({message: 'There was an error when creating a new pdf'});
+    }
+}
+
 
 // Add multer as middleware to handle file upload
+/*
 export const createPdf: RequestHandler = async (req: Request, res: Response) => {
     upload.single('pdfBlob')(req, res, async (err: any) => {
+        if (err) {
+            console.error('[pdf.controller][createPdf][Multer Error]', err);
+            return res.status(500).json({ message: 'File upload error' });
+        }
+
         try {
-            const fileBuffer = req.file?.buffer;
-            const okPacket: OkPacket = await PdfDao.createPdf(req.body, fileBuffer);
+            const { pdfUserId, pdfName, dateUploaded } = req.body;
+            const pdfBlob = req.file?.buffer;  // This holds the binary data of the file
+
+            if (!pdfBlob) {
+                return res.status(400).json({ message: 'No file uploaded' });
+            }
+
+            // `id` is now optional in `Pdf`, so `pdfData` can be created without it
+            const pdfData: Pdf = { pdfUserId: parseInt(pdfUserId), pdfBlob, pdfName, dateUploaded };
+            const okPacket: OkPacket = await PdfDao.createPdf(pdfData);
 
             res.status(200).json(okPacket);
         } catch (error) {
@@ -96,7 +123,7 @@ export const createPdf: RequestHandler = async (req: Request, res: Response) => 
             res.status(500).json({ message: 'There was an error when creating a new pdf' });
         }
     });
-};
+};*/
 
 export const updatePdf: RequestHandler = async (req: Request, res: Response) => {
     try {
