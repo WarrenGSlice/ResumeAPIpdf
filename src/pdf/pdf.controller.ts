@@ -67,7 +67,7 @@ export const readPdfBySearchTerm: RequestHandler = async (req: Request, res: Res
         res.status(500).json({message: 'There was an error when fetching pdfs by search term'});
     }
 };
-/*
+
 export const createPdf: RequestHandler = async (req: Request, res: Response) => {
     try {
         const okPacket: OkPacket = await PdfDao.createPdf(req.body);
@@ -78,10 +78,11 @@ export const createPdf: RequestHandler = async (req: Request, res: Response) => 
         res.status(200).json(okPacket);
     } catch (error) {
         console.error('[pdf.controller][createPdf][Error] ', error);
+        res.status(200).json(req.body);
         res.status(500).json({message: 'There was an error when creating a new pdf'});
     }
-};*/
-
+};
+/*
 export const createPdf: RequestHandler = async (req,res) => {
     const form = req.body as Pdf;
 
@@ -94,7 +95,7 @@ export const createPdf: RequestHandler = async (req,res) => {
         res.status(500).json({message: 'There was an error when creating a new pdf'});
     }
 }
-
+*/
 
 // Add multer as middleware to handle file upload
 /*

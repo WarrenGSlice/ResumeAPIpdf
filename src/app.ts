@@ -13,6 +13,8 @@ const app = express();
 const port = process.env.PORT || 5000;
 //const port = 3000;
 
+
+
 // CORS configuration
 const corsOptions = {
     origin: '*', // Allow any origin (equivalent to .SetIsOriginAllowed(origin => true))
@@ -40,10 +42,12 @@ if (process.env.NODE_ENV == 'development' || 'production') {
 }
 
 app.get('/',(req: Request, res: Response) => {
-    res.send('PDF file save homepage');
+    res.send('This is the PDF Homepage');
 });
 
 app.use('/', [pdfRouter]);
+
+
 
 // Start the application and listen for incoming requests on the specified port.
 app.listen(port, () => {
