@@ -4,7 +4,9 @@ import helmet from 'helmet';
 import cors from 'cors';
 import logger from './middleware/logger.middleware';
 import dotenv from 'dotenv';
-//import bodyParser from 'body-parser';
+import { execute } from './services/mysql.connector';
+import multer from 'multer';
+
 
 dotenv.config(/*{ path: './.env'}*/);
 // Create an instance of the Express application.
@@ -47,7 +49,41 @@ app.get('/',(req: Request, res: Response) => {
 
 app.use('/', [pdfRouter]);
 
+// Configure multer for file upload (in-memory storage for PDF files)
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
+// Endpoint to handle PDF upload
+// Endpoint to handle PDF upload
+app.post('/upload', upload.single('pdfFile'), async (req: Request, res: Response): Promise<void> => {
+    try {
+      if (!req.file) {
+        res.status(400).send('No file uploaded');
+        return;  // Early return to prevent further code execution
+      }
+  
+      // Extract PDF file data
+      const fileBuffer = req.file.buffer;
+      const fileName = req.file.originalname;
+      const dateUploaded = new Date().toISOString().slice(0, 10); // YYYY-MM-DD format
+  
+      // MySQL Insert query
+      const query = `
+        INSERT INTO pdf_files (pdfUserId, pdfName, dateUploaded, pdfBlob)
+        VALUES (?, ?, ?, ?)
+      `;
+  
+      const pdfUserId = req.body.pdfUserId;  // Extract user ID from request body
+  
+      // Execute the query
+      await execute<any[]>(query, [pdfUserId, fileName, dateUploaded, fileBuffer]);
+  
+      res.status(200).send('PDF file uploaded successfully');
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      res.status(500).send('Error uploading file');
+    }
+  });
 
 // Start the application and listen for incoming requests on the specified port.
 app.listen(port, () => {
