@@ -18,8 +18,8 @@ export const readPdfByName = async (pdfName: string) => {
 export const readPdfBySearchTerm = async (search: string) => {
     return execute<Pdf[]>(pdfQueries.readPdfBySearchTerm, [search]);
 };
-
-export const createPdf = async (pdf: Pdf) => {
+// Updated createPdf to match format that works for uploaded pdfs
+export const createPdf = async (pdf: Pdf): Promise<OkPacket> => {
     return execute<OkPacket>(pdfQueries.createPdf, [pdf.pdfUserId, pdf.pdfName, pdf.dateUploaded, pdf.pdfBlob]);
 };
 

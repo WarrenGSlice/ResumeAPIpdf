@@ -70,62 +70,31 @@ export const readPdfBySearchTerm: RequestHandler = async (req: Request, res: Res
 
 export const createPdf: RequestHandler = async (req: Request, res: Response) => {
     try {
-        const okPacket: OkPacket = await PdfDao.createPdf(req.body);
+        if (!req.file) {
+            res.status(400).json({ message: 'No file uploaded' });
+            return;
+        }
 
-        console.log('req.body', req.body);
-        console.log('pdf', okPacket);
+        const fileBuffer = req.file.buffer.toString('base64'); // Convert to string
+        const fileName = req.file.originalname;
+        const dateUploaded = new Date().toISOString().slice(0, 10); // Format: YYYY-MM-DD
+        const pdfUserId = req.body.pdfUserId;
 
-        res.status(200).json(okPacket);
+        if (!pdfUserId) {
+            res.status(400).json({ message: 'Missing pdfUserId' });
+            return;
+        }
+
+        await PdfDao.createPdf({pdfUserId, pdfName: fileName, dateUploaded, pdfBlob: fileBuffer});
+
+        res.status(200).json({ message: 'PDF file uploaded successfully'});
     } catch (error) {
-        console.error('[pdf.controller][createPdf][Error] ', error);
-        //res.status(500).json(req.body);
-        res.status(500).json({message: 'There was an error when creating a new pdf'});
-        res.status(501).json(req.body);
+        console.error('[pdf.controller][uploadPdf][Error]', error);
+        res.status(500).json({ message: 'Error uploading PDF' });
     }
 };
-/*
-export const createPdf: RequestHandler = async (req,res) => {
-    const form = req.body as Pdf;
-
-    try {
-        const addedPdf = await PdfDao.createPdf(form);
-        const {} = addedPdf;
-        res.status(201).send({error: null, result: form});
-    } catch (error) {
-        console.error('[pdf.controller][createPdf][Error] ', error);
-        res.status(500).json({message: 'There was an error when creating a new pdf'});
-    }
-}
-*/
-
-// Add multer as middleware to handle file upload
-/*
-export const createPdf: RequestHandler = async (req: Request, res: Response) => {
-    upload.single('pdfBlob')(req, res, async (err: any) => {
-        if (err) {
-            console.error('[pdf.controller][createPdf][Multer Error]', err);
-            return res.status(500).json({ message: 'File upload error' });
-        }
-
-        try {
-            const { pdfUserId, pdfName, dateUploaded } = req.body;
-            const pdfBlob = req.file?.buffer;  // This holds the binary data of the file
-
-            if (!pdfBlob) {
-                return res.status(400).json({ message: 'No file uploaded' });
-            }
-
-            // `id` is now optional in `Pdf`, so `pdfData` can be created without it
-            const pdfData: Pdf = { pdfUserId: parseInt(pdfUserId), pdfBlob, pdfName, dateUploaded };
-            const okPacket: OkPacket = await PdfDao.createPdf(pdfData);
-
-            res.status(200).json(okPacket);
-        } catch (error) {
-            console.error('[pdf.controller][createPdf][Error]', error);
-            res.status(500).json({ message: 'There was an error when creating a new pdf' });
-        }
-    });
-};*/
+// Multer middleware export - Works as part of the createPdf method up above
+export const uploadMiddleware = upload.single('pdfBlob');
 
 export const updatePdf: RequestHandler = async (req: Request, res: Response) => {
     try {

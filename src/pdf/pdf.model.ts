@@ -1,5 +1,5 @@
 export interface Pdf {
-    id: number;
+    id?: number; // Made it as optional to get it to work correctly
     pdfUserId: number;
     pdfName: string;
     dateUploaded: string;
