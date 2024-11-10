@@ -86,25 +86,10 @@ export const createPdf: RequestHandler = async (req: Request, res: Response) => 
 // Add multer as middleware to handle file upload
 export const createPdf: RequestHandler = async (req: Request, res: Response) => {
     upload.single('pdfBlob')(req, res, async (err: any) => {
-        if (err) {
-            console.error('[pdf.controller][createPdf][Multer Error] ', err);
-            return res.status(500).json({ message: 'File upload error' });
-        }
-
         try {
-            const { pdfUserId, pdfName, dateUploaded } = req.body;
-            const pdfBlob = req.file?.buffer;
-        
-            if (!pdfBlob) {
-                return res.status(400).json({ message: 'No file uploaded' });
-            }
-        
-            const pdfData: Pdf = { pdfUserId: parseInt(pdfUserId), pdfName, dateUploaded, pdfBlob };
-        
-            console.log('pdfData:', pdfData);  // Log pdfData to inspect values
-        
-            const okPacket: OkPacket = await PdfDao.createPdf(pdfData);
-        
+            const fileBuffer = req.file?.buffer;
+            const okPacket: OkPacket = await PdfDao.createPdf(req.body, fileBuffer);
+
             res.status(200).json(okPacket);
         } catch (error) {
             console.error('[pdf.controller][createPdf][Error]', error);
