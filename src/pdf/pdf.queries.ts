@@ -12,9 +12,7 @@ export const pdfQueries = {
         WHERE bhxhr5tkthkjr1rbfskg.pdfs.id = ?
     `,
     readPdfByName:`
-        SELECT
-            id as id, pdfUserId as pdfUserId, pdfName as pdfName, dateUploaded as dateUploaded, pdfBlob as pdfBlob
-        FROM bhxhr5tkthkjr1rbfskg.pdfs
+        SELECT * FROM bhxhr5tkthkjr1rbfskg.pdfs
         WHERE bhxhr5tkthkjr1rbfskg.pdfs.pdfName = ?
     `,
     readPdfBySearchTerm:`
@@ -29,7 +27,7 @@ export const pdfQueries = {
     `,
     updatePdf:`
         UPDATE bhxhr5tkthkjr1rbfskg.pdfs
-        SET  pdfName = ?, dateUploaded = ?, pdfBlob = ?
+        SET  pdfUserId = ?, pdfName = ?, dateUploaded = ?, pdfBlob = ?
         WHERE id = ?
     `,
     deletePdf:`

@@ -2,18 +2,19 @@ import { Router } from 'express';
 import * as PdfController from './pdf.controller';
 
 const router = Router();
+// GET ALL RESUME
 router.
     route('/pdf').
     get(PdfController.readPdf);
-
+// SEARCH BY pdf NAME
 router.
     route('/pdf/:pdfName').
     get(PdfController.readPdfByName);
-
+// SEARCH BY ID
 router.
-    route('/pdf/:id').
+    route('/id/:id').
     get(PdfController.readPdfById);
-
+// SEARCH BY ANY TERM
 router
     .route('/pdf/search/:search')
     .get(PdfController.readPdfBySearchTerm);
@@ -26,11 +27,11 @@ router
 router
     .route('/upload')
     .post(PdfController.uploadMiddleware,PdfController.createPdf);
-
+// UPDATE
 router
-    .route('/pdf')
-    .put(PdfController.updatePdf);
-
+    .route('/update')
+    .put(PdfController.uploadMiddleware,PdfController.updatePdf);
+// DELETE
 router
     .route('/pdf/:id')
     .delete(PdfController.deletePdf);
